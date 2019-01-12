@@ -4,11 +4,16 @@ const path = require('path')
 let options = {
     roles: {test},
     decodedObjectName: 'user',
-    roleSearchPath: 'user.role'
+    roleSearchPath: 'user.role',
+    baseUrl: '',
+    defaultRole:'unauthorized'
 }
 
 function config(conf) {
     options = Object.assign({}, options, conf);
+    if (options.baseUrl[0] === '/') {
+        options.baseUrl = options.baseUrl.replace('/', '')
+    }
 }
 
 function evaluateRules(roleName, resource, method) {
@@ -22,7 +27,7 @@ function evaluateRules(roleName, resource, method) {
         else if (!(permission.methods instanceof Array) && (permission.methods !== '*' && permission.methods !== method)) {
             continue;
         }
-        let resourceMatch = matchResource(permission.resource, resource)
+        let resourceMatch = matchResource(path.join(options.baseUrl, permission.resource), resource)
         if (resourceMatch !== ReturnValues.NoMatch) {
             isAllowed = permission.action === 'allow' ? true : false 
             if (resourceMatch === ReturnValues.ExactMatch) {
@@ -62,8 +67,22 @@ function matchResource(resourceRule, incomingResource) {
 }
 
 function authorize(req, res, next) {
-    let role = req[options.decodedObjectName]
-    if (evaluateRules(dot.pick(options.roleSearchPath, role), req.path.replace('/', ''),req.method)) {
-        
+    let decodedObject = req[options.decodedObjectName]
+    let role = dot.pick(options.roleSearchPath, decodedObject)
+    if (!role) {
+        role = options.defaultRole
     }
+    if (evaluateRules(unauthorized, req.path.replace('/', ''),req.method)) {
+        next()
+    } else {
+        res.status(403).json({
+            message: 'Forbidden'
+        })
+    }
+}
+
+module.exports = {
+    authorize,
+    config,
+    evaluateRules
 }
