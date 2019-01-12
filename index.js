@@ -72,7 +72,7 @@ function authorize(req, res, next) {
     if (!role) {
         role = options.defaultRole
     }
-    if (evaluateRules(unauthorized, req.path.replace('/', ''),req.method)) {
+    if (evaluateRules(role, req.path.replace('/', ''),req.method)) {
         next()
     } else {
         res.status(403).json({
