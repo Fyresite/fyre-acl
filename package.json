@@ -1,5 +1,5 @@
 {
-  "name": "fyre-acl",
+  "name": "@fyresite/fyre-acl",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
