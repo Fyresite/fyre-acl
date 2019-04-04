@@ -17,7 +17,17 @@ module.exports = {
         action: 'allow'
       },
       {
-        resource: 'event/*/pie',
+        resource: 'event/*',
+        methods: '*',
+        action: 'allow',
+      },
+      {
+        resource: 'event/*/pie/*/mike',
+        methods: '*',
+        action: 'deny'
+      },
+      {
+        resource: 'test/#',
         methods: '*',
         action: 'allow'
       },

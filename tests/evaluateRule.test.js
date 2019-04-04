@@ -23,6 +23,13 @@ test('relative multi match', () => {
     expect(acl.evaluateRules('guest', 'v1/event/summery/pie', 'GET')).toBe(true)
     expect(acl.evaluateRules('guest', 'v1/event/milk/pie', 'PUT')).toBe(true)
     expect(acl.evaluateRules('guest', 'v1/event/man/pie', 'POST')).toBe(true)
-    expect(acl.evaluateRules('guest', 'v1/event/man/bite', 'POST')).toBe(false)
+    expect(acl.evaluateRules('guest', 'v1/event/man/bite', 'POST')).toBe(true)
+    expect(acl.evaluateRules('guest', 'v1/event/man', 'POST')).toBe(true)
+    expect(acl.evaluateRules('guest', 'v1/event/pie/man', 'POST')).toBe(true)
+    expect(acl.evaluateRules('guest', 'v1/event/fyre/pie/man/mike', 'POST')).toBe(false)
+})
+test('# wildcard match', () => {
+    expect(acl.evaluateRules('guest', 'v1/test/234', 'POST')).toBe(true)
+    expect(acl.evaluateRules('guest', 'v1/test/mike', 'POST')).toBe(false)
 })
 
